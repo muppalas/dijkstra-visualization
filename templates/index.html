@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dijkstra Visualizer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #f8f9fa;
+            padding: 2rem;
+        }
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .form-label {
+            margin-top: 1rem;
+        }
+        .path-box {
+            background: #e9f7ef;
+            padding: 1rem;
+            border-left: 4px solid #28a745;
+            margin-top: 1rem;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Dijkstra's Algorithm Visualizer</h1>
+
+    {% if error %}
+        <div class="alert alert-danger" role="alert">
+            Error: {{ error }}
+        </div>
+    {% endif %}
+
+    {% if not form_type %}
+        <form method="POST">
+            <input type="hidden" name="form_type" value="init">
+            <div class="mb-3">
+                <label class="form-label">Number of Nodes</label>
+                <input type="number" name="nodes" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Number of Edges</label>
+                <input type="number" name="edges" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Next</button>
+        </form>
+
+    {% elif form_type == 'init' %}
+        <form method="POST">
+            <input type="hidden" name="form_type" value="visualize">
+            <input type="hidden" name="num_nodes" value="{{ nodes }}">
+            <input type="hidden" name="num_edges" value="{{ edges }}">
+
+            {% for i in range(edges) %}
+                <div class="mb-3 row">
+                    <h5>Edge {{ i+1 }}</h5>
+                    <div class="col">
+                        <label class="form-label">From</label>
+                        <input type="number" name="u{{ i }}" class="form-control" required>
+                    </div>
+                    <div class="col">
+                        <label class="form-label">To</label>
+                        <input type="number" name="v{{ i }}" class="form-control" required>
+                    </div>
+                    <div class="col">
+                        <label class="form-label">Weight</label>
+                        <input type="number" name="w{{ i }}" class="form-control" required>
+                    </div>
+                </div>
+            {% endfor %}
+
+            <div class="mb-3">
+                <label class="form-label">Source Node</label>
+                <input type="number" name="source" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Target Node</label>
+                <input type="number" name="target" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-success">Visualize</button>
+        </form>
+
+        {% if path %}
+            <div class="path-box">
+                <h4>Shortest Path:</h4>
+                <p><strong>{{ path|join(" → ") }}</strong></p>
+                <p>Total Distance: <strong>{{ distance }}</strong></p>
+            </div>
+
+            {% if path_edges %}
+                <h5>Path Edges:</h5>
+                <ul class="list-group">
+                    {% for u, v in path_edges %}
+                        <li class="list-group-item">{{ u }} → {{ v }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endif %}
+    {% endif %}
+</div>
+
+</body>
+</html>
